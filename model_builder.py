@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 12 10:17:47 2026
+
+@author: kristianfoerster
+"""
+
+from pathlib import Path
+
+
+def build_swmm_model(
+    output_file="hillslope_model.inp",
+#    rainfall_mm_per_hour=10.0,
+#    simulation_hours=6,
+):
+    """
+    Erzeugt eine einfache SWMM-INP-Datei für ein idealisiertes Hangmodell.
+
+    Modellannahmen:
+    - Einzugsgebiet: 300 x 150 m
+    - Sechs Teilflächen mit je 7.500 m²
+    - Vereinfachte serielle Abflussverbindung
+    - Ein gemeinsamer Gebietsauslass
+    - Konstanter Niederschlag während der ersten Stunde
+
+    Die hydrologischen Parameter sind Demonstrationswerte,
+    keine kalibrierten Werte für ein reales Einzugsgebiet.
+    """
+
+    output_file = Path(output_file)
+
+    # Sechs Teilflächen mit jeweils 7.500 m²
+    subcatchment_area_ha = 0.75
+
+    lines = [
+        "[TITLE]",
+        "Idealized hillslope model - six serial subcatchments",
+        "",
+        "[OPTIONS]",
+        "FLOW_UNITS           CMS",
+        "INFILTRATION         HORTON",
+        "FLOW_ROUTING         DYNWAVE",
+        "START_DATE           06/01/2025",
+        "START_TIME           00:00:00",
+        "REPORT_START_DATE    06/01/2025",
+        "REPORT_START_TIME    00:00:00",
+        "END_DATE             06/29/2025",
+        "END_TIME             00:00:00",
+        "SWEEP_START          01/01",
+        "SWEEP_END            12/31",
+        "DRY_DAYS             0",
+        "REPORT_STEP          00:15:00",
+        "WET_STEP             00:01:00",
+        "DRY_STEP             01:00:00",
+        "ROUTING_STEP         00:00:30",
+        "ALLOW_PONDING        NO",
+        "INERTIAL_DAMPING     PARTIAL",
+        "VARIABLE_STEP        0.75",
+        "LENGTHENING_STEP     0",
+        "MIN_SURFAREA         1.0",
+        "SKIP_STEADY_STATE    NO",
+        "",
+        "[EVAPORATION]",
+        "CONSTANT 5.0",
+        "",
+        "[RAINGAGES]",
+        "RG1 VOLUME 1:00 1.0 TIMESERIES RainSeries",
+        "",
+        "[TIMESERIES]",
+        "RainSeries 06/01/2025 00:00 0.0",
+        "RainSeries 06/01/2025 01:00 5.0",
+        "RainSeries 06/01/2025 02:00 5.0",
+        "RainSeries 06/01/2025 03:00 5.0",
+        "RainSeries 06/01/2025 04:00 5.0",
+        "RainSeries 06/01/2025 05:00 5.0",
+        "RainSeries 06/01/2025 06:00 5.0",
+        "RainSeries 06/01/2025 07:00 5.0",
+        "RainSeries 06/01/2025 08:00 5.0",
+        "RainSeries 06/01/2025 09:00 5.0",
+        "RainSeries 06/01/2025 10:00 5.0",
+        "RainSeries 06/01/2025 11:00 5.0",
+        "RainSeries 06/01/2025 12:00 5.0",
+        "RainSeries 06/01/2025 13:00 5.0",
+        "RainSeries 06/01/2025 14:00 5.0",
+        "RainSeries 06/01/2025 15:00 5.0",
+        "RainSeries 06/01/2025 16:00 5.0",
+        "RainSeries 06/01/2025 17:00 5.0",
+        "RainSeries 06/01/2025 18:00 5.0",
+        "RainSeries 06/01/2025 19:00 5.0",
+        "RainSeries 06/01/2025 20:00 5.0",
+        "RainSeries 06/01/2025 21:00 5.0",
+        "RainSeries 06/01/2025 22:00 5.0",
+        "RainSeries 06/01/2025 23:00 5.0",
+        "RainSeries 06/02/2025 00:00 5.0",
+        "RainSeries 06/02/2025 01:00 0.0",
+        "",        "",
+        "[SUBCATCHMENTS]",
+        "; Name RainGage Outlet Area(ha) %Imperv Width(m) Slope(%) CurbLen(m)",
+    ]
+
+    for i in range(1, 7):
+        outlet = f"N{i}"
+        lines.append(
+            f"S{i} RG1 {outlet} {subcatchment_area_ha:.3f} "
+            "0.0 50.0 5.0 0.0"
+        )
+
+    lines += [
+        "",
+        "[SUBAREAS]",
+        "; Subcatchment N-Imperv N-Perv S-Imperv S-Perv PctZero RouteTo PctRouted",
+    ]
+
+    for i in range(1, 7):
+        lines.append(f"S{i} 0.01 0.15 1.5 5.0 25.0 OUTLET 100")
+
+    lines += [
+        "",
+        "[INFILTRATION]",
+        "; Subcatchment MaxRate MinRate Decay DryTime MaxInfil",
+    ]
+
+    for i in range(1, 7):
+        lines.append(f"S{i} 75.0 4.0 3.0 7.0 0.0")
+
+    lines += [
+        "",
+        "[JUNCTIONS]",
+        "; Name Elevation(m) MaxDepth(m) InitDepth(m) SurDepth(m) Aponded(m2)",
+    ]
+
+    for i in range(1, 7):
+        elevation = (6 - i) * 0.5
+        lines.append(f"N{i} {elevation:.2f} 2.0 0.0 0.0 0.0")
+
+    lines += [
+        "",
+        "[OUTFALLS]",
+        "; Name Elevation(m) Type StageData Gated RouteTo",
+        "OUT1 0.0 FREE NO",
+        "",
+        "[CONDUITS]",
+        "; Name FromNode ToNode Length(m) Roughness InOffset OutOffset InitFlow MaxFlow",
+    ]
+
+    for i in range(1, 6):
+        lines.append(
+            f"C{i} N{i} N{i + 1} 50.0 0.035 0.0 0.0 0.0 0.0"
+        )
+
+    lines.append("C6 N6 OUT1 50.0 0.035 0.0 0.0 0.0 0.0")
+
+    lines += [
+        "",
+        "[XSECTIONS]",
+        "; Conduit Shape Geom1 Geom2 Geom3 Geom4 Barrels",
+    ]
+
+    for i in range(1, 7):
+        lines.append(f"C{i} CIRCULAR 0.30 0.0 0.0 0.0 1")
+
+    lines += [
+        "",
+        "[REPORT]",
+        "INPUT YES",
+        "CONTROLS NO",
+        "SUBCATCHMENTS ALL",
+        "NODES ALL",
+        "LINKS ALL",
+        "",
+        "[MAP]",
+        "DIMENSIONS 0 0 300 150",
+        "Units METERS",
+        "",
+        "[COORDINATES]",
+        "N1 250 25",
+        "N2 200 25",
+        "N3 150 25",
+        "N4 100 25",
+        "N5 50 25",
+        "N6 10 25",
+        "OUT1 0 25",
+        "",
+        "[POLYGONS]",
+        "S1 250 0",
+        "S1 300 0",
+        "S1 300 150",
+        "S1 250 150",
+        "S2 200 0",
+        "S2 250 0",
+        "S2 250 150",
+        "S2 200 150",
+        "S3 150 0",
+        "S3 200 0",
+        "S3 200 150",
+        "S3 150 150",
+        "S4 100 0",
+        "S4 150 0",
+        "S4 150 150",
+        "S4 100 150",
+        "S5 50 0",
+        "S5 100 0",
+        "S5 100 150",
+        "S5 50 150",
+        "S6 0 0",
+        "S6 50 0",
+        "S6 50 150",
+        "S6 0 150",
+        "",
+#        "[END]",
+        "",
+    ]
+
+    output_file.write_text("\n".join(lines), encoding="utf-8")
+
+    return output_file

@@ -1,0 +1,6 @@
+streamlit==1.41.1
+pyswmm==1.5.1
+swmmio==0.8.6
+pandas
+numpy
+matplotlib
