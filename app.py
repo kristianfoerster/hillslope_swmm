@@ -155,20 +155,29 @@ if st.button("Run SWMM simulation", type="primary"):
         # --------------------------------------------------
         # Model visualization
         # --------------------------------------------------
-
+        
         st.subheader("SWMM model")
-
+        
         model = swmmio.Model(str(inp_file))
-
-        fig_model, ax_model = plt.subplots(figsize=(11, 5))
-
+        
+        image_file = workdir / "swmm_model.png"
+        
         swmmio.draw_model(
             model,
-            title="Idealized Hillslope Model",
+            title=None,
+            file_path=str(image_file),
         )
-
-        st.pyplot(fig_model)
-        plt.close(fig_model)
+        
+        if image_file.exists():
+            st.image(
+                str(image_file),
+                caption="Idealized Hillslope SWMM model",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "swmmio did not create the model image."
+            )
 
         # --------------------------------------------------
         # Download input file
