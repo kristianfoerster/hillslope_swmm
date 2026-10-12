@@ -298,10 +298,10 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "rainfall": rainfall,
             "evaporation": evaporation,
             "runoff": s1_runoff
-        }).resample('D').sum()
+        }).resample('D').mean()
 
 
-        fig, axes = plt.subplots(4,1,figsize=(11, 4), sharex=True)
+        fig, axes = plt.subplots(4,1,figsize=(11, 8), sharex=True)
 
         #ax.plot(
         #    hydrograph["Time"],
@@ -327,7 +327,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             df["evaporation"],
             width=0.03
         )
-        axes[1].set_ylabel("Evapotranspiration [mm/$\Delta t$]")
+        axes[1].set_ylabel("ET [mm/$\Delta t$]")
         axes[1].set_title("S1 Evapotranspiration ET")
         axes[1].grid(axis="y", alpha=0.3)
 
@@ -336,7 +336,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             df["runoff"],
             width=0.03
         )
-        axes[2].set_ylabel("Runoff [mm/$\Delta t$]")
+        axes[2].set_ylabel("R [mm/$\Delta t$]")
         axes[2].set_title("S1 Runoff R")
         axes[2].grid(axis="y", alpha=0.3)
 
@@ -350,6 +350,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[3].set_title("Total hillslope discharge")
         axes[3].grid(alpha=0.3)
 
+        fig.tight_layout()
 
         fig.autofmt_xdate()
         st.pyplot(fig)
