@@ -316,16 +316,16 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[0].bar(
             df.index,
             df["rainfall"],
-            width=0.03
+            width=1
         )
         axes[0].set_ylabel("P [mm/$\Delta t$]")
-        axes[1].set_title("S1 Precipitation P")
+        axes[0].set_title("S1 Precipitation P")
         axes[0].grid(axis="y", alpha=0.3)
 
         axes[1].bar(
             df.index,
             df["evaporation"],
-            width=0.03
+            width=1
         )
         axes[1].set_ylabel("ET [mm/$\Delta t$]")
         axes[1].set_title("S1 Evapotranspiration ET")
@@ -334,7 +334,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[2].bar(
             df.index,
             df["runoff"],
-            width=0.03
+            width=1
         )
         axes[2].set_ylabel("R [mm/$\Delta t$]")
         axes[2].set_title("S1 Runoff R")
