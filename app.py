@@ -19,11 +19,9 @@ from model_builder import build_swmm_model
 
 from matplotlib.patches import Rectangle
 
-def build_model(file):
+def build_model(inp_file):
     workdir = Path("swmm_run")
     workdir.mkdir(exist_ok=True)
-
-    inp_file = workdir / file
 
     # Build model
     build_swmm_model(
@@ -39,7 +37,7 @@ def build_model(file):
     st.write(f"Rainfall intensity: {hourly_intensity:.1f} mm/h")
 
 
-def model_vis(file):
+def model_vis(inp_file):
     # --------------------------------------------------
     # Model visualization
     # --------------------------------------------------
@@ -179,6 +177,7 @@ run_simulation = st.sidebar.button(
 )
 
 filename = "hillslope_model.inp"
+inp_file = workdir / filename
 
 build_model(filename)
 model_vis(filename)
