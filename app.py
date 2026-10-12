@@ -46,15 +46,38 @@ def model_vis(inp_file):
     
     fig_model, ax_model = plt.subplots(figsize=(12, 6))
 
-    # areas
-    # Einzugsgebiete als idealisierte Rechtecke darstellen
-    for i in range(6):
-        x = i * 50
-    
-        area = Rectangle(
-            (x, 0),
-            50,
-            150,
+    # areas: read polygons from INP file
+    inp_path = Path(inp_file)
+
+    with open(inp_path, "r") as f:
+        lines = f.readlines()
+
+    in_polygons = False
+    polygons = {}
+
+    for line in lines:
+        line = line.strip()
+
+        if line.startswith("["):
+            in_polygons = line.upper() == "[POLYGONS]"
+            continue
+
+        if not in_polygons or not line or line.startswith(";"):
+            continue
+
+        parts = line.split()
+
+        if len(parts) >= 3:
+            name = parts[0]
+            x = float(parts[1])
+            y = float(parts[2])
+
+            polygons.setdefault(name, []).append((x, y))
+
+    for name, points in polygons.items():
+        area = Polygon(
+            points,
+            closed=True,
             facecolor="lightblue",
             edgecolor="steelblue",
             alpha=0.4,
@@ -62,11 +85,15 @@ def model_vis(inp_file):
             zorder=1,
         )
         ax_model.add_patch(area)
-    
+
+        # Label in the center of the polygon
+        x_center = sum(p[0] for p in points) / len(points)
+        y_center = sum(p[1] for p in points) / len(points)
+
         ax_model.text(
-            x + 25,
-            75,
-            f"S{i + 1}\n7.500 m²",
+            x_center,
+            y_center,
+            f"{name}\n7.500 m²",
             ha="center",
             va="center",
             fontsize=10,
