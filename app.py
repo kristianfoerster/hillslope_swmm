@@ -163,13 +163,13 @@ if st.button("Run SWMM simulation", type="primary"):
         fig_model, ax_model = plt.subplots(figsize=(11, 5))
         
         # Plot conduits using the model's link geometries
-        links = model.links.geodataframe()
+        links = model.links.geodataframe
         
         if not links.empty:
             links.plot(ax=ax_model, color="steelblue", linewidth=2)
         
         # Plot nodes using their coordinates
-        nodes = model.nodes.geodataframe()
+        nodes = model.nodes.geodataframe
         
         if not nodes.empty:
             nodes.plot(ax=ax_model, color="darkred", markersize=25)
