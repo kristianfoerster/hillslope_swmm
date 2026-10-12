@@ -303,6 +303,10 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "The hydrograph shows the total inflow reported "
             "by PySWMM for node OUT1."
         )
+        
+        st.write(model.inp.raingages)
+        st.write(model.inp.timeseries)
+        st.write(model.inp.evaporation)
 
 
         # --------------------------------------------------
