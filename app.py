@@ -295,11 +295,11 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         df = pd.DataFrame({
             "time": times,
-            "flow": flows,
+            #"flow": flows,
             "rainfall": rainfall,
             "evaporation": evaporation,
             "runoff": s1_runoff
-        })
+        }).resample('D').sum()
 
 
         fig, axes = plt.subplots(4,1,figsize=(11, 4), sharex=True)
@@ -343,8 +343,8 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
 
         axes[3].plot(
-            df["time"],
-            df["flow"]
+            times,
+            flows
         )
         axes[3].set_ylabel("Discharge [m³/s]")
         axes[3].set_xlabel("Time")
