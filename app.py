@@ -183,15 +183,15 @@ if st.button("Run SWMM simulation", type="primary"):
             )
         
             # names
-            for _, node in nodes.iterrows():
-                point = node.geometry
-                ax_model.annotate(
-                    node["Name"],
-                    (point.x, point.y),
-                    xytext=(4, 7),
-                    textcoords="offset points",
-                    fontsize=9,
-                )
+        for node_name, node in nodes.iterrows():
+            point = node.geometry
+            ax_model.annotate(
+                str(node_name),
+                (point.x, point.y),
+                xytext=(4, 7),
+                textcoords="offset points",
+                fontsize=9,
+            )
         
         ax_model.set_title("Idealized Hillslope SWMM model")
         ax_model.set_xlabel("X coordinate (m)")
