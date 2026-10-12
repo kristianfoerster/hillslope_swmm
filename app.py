@@ -19,6 +19,108 @@ from model_builder import build_swmm_model
 
 from matplotlib.patches import Rectangle
 
+def build_model():
+    workdir = Path("swmm_run")
+    workdir.mkdir(exist_ok=True)
+
+    inp_file = workdir / "hillslope_model.inp"
+
+    # Build model
+    build_swmm_model(
+        output_file=inp_file,
+        hourly_intensity=hourly_intensity,
+        slope_percent=slope_percent,
+        curve_number=curve_number,
+    )
+
+    st.write("### Parameters:")
+    st.write(f"Curve Number: {curve_number}")
+    st.write(f"Slope: {slope_percent:.1f} %")
+    st.write(f"Rainfall intensity: {hourly_intensity:.1f} mm/h")
+
+
+def model_vis():
+    # --------------------------------------------------
+    # Model visualization
+    # --------------------------------------------------
+    
+    st.subheader("SWMM model")
+    
+    model = swmmio.Model(str(inp_file))
+    
+    fig_model, ax_model = plt.subplots(figsize=(12, 6))
+
+    # areas
+    # Einzugsgebiete als idealisierte Rechtecke darstellen
+    for i in range(6):
+        x = i * 50
+    
+        area = Rectangle(
+            (x, 0),
+            50,
+            150,
+            facecolor="lightblue",
+            edgecolor="steelblue",
+            alpha=0.4,
+            linewidth=1.5,
+            zorder=1,
+        )
+        ax_model.add_patch(area)
+    
+        ax_model.text(
+            x + 25,
+            75,
+            f"S{i + 1}\n7.500 m²",
+            ha="center",
+            va="center",
+            fontsize=10,
+            zorder=4,
+        )
+
+    
+    # links
+    links = model.links.geodataframe
+    if not links.empty:
+        links.plot(
+            ax=ax_model,
+            color="steelblue",
+            linewidth=2,
+            zorder=2,
+        )
+    
+    # nodes
+    nodes = model.nodes.geodataframe
+    if not nodes.empty:
+        nodes.plot(
+            ax=ax_model,
+            color="darkred",
+            markersize=35,
+            zorder=3,
+        )
+    
+        # names
+    for node_name, node in nodes.iterrows():
+        point = node.geometry
+        ax_model.annotate(
+            str(node_name),
+            (point.x, point.y),
+            xytext=(4, 7),
+            textcoords="offset points",
+            fontsize=9,
+        )
+    
+    ax_model.set_title("Idealized Hillslope SWMM model")
+    ax_model.set_xlabel("X coordinate (m)")
+    ax_model.set_ylabel("Y coordinate (m)")
+    ax_model.set_aspect("equal", adjustable="datalim")
+    ax_model.grid(True, alpha=0.3)
+    
+    
+    ax_model.set_xlim(-10, 270)
+    ax_model.set_ylim(-10, 165)
+    st.pyplot(fig_model)
+    plt.close(fig_model)
+
 # --------------------------------------------------
 # Seitenaufbau
 # --------------------------------------------------
@@ -70,29 +172,22 @@ st.sidebar.caption(
 )
 
 
+run_simulation = st.sidebar.button(
+    "Run SWMM simulation",
+    type="primary",
+    use_container_width=True,
+)
+
+build_model()
+model_vis()
+
 # --------------------------------------------------
 # Simulation
 # --------------------------------------------------
 
-if st.button("Run SWMM simulation", type="primary"):
+if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
-    workdir = Path("swmm_run")
-    workdir.mkdir(exist_ok=True)
-
-    inp_file = workdir / "hillslope_model.inp"
-
-    # Build model
-    build_swmm_model(
-        output_file=inp_file,
-        hourly_intensity=hourly_intensity,
-        slope_percent=slope_percent,
-        curve_number=curve_number,
-    )
-
-    st.write("### Simulation")
-    st.write(f"Curve Number: {curve_number}")
-    st.write(f"Slope: {slope_percent:.1f} %")
-    st.write(f"Rainfall intensity: {hourly_intensity:.1f} mm/h")
+    build_model()
 
     try:
         # Run SWMM
@@ -153,86 +248,7 @@ if st.button("Run SWMM simulation", type="primary"):
             "by PySWMM for node OUT1."
         )
 
-        # --------------------------------------------------
-        # Model visualization
-        # --------------------------------------------------
-        
-        st.subheader("SWMM model")
-        
-        model = swmmio.Model(str(inp_file))
-        
-        fig_model, ax_model = plt.subplots(figsize=(12, 6))
-
-        # areas
-        # Einzugsgebiete als idealisierte Rechtecke darstellen
-        for i in range(6):
-            x = i * 50
-        
-            area = Rectangle(
-                (x, 0),
-                50,
-                150,
-                facecolor="lightblue",
-                edgecolor="steelblue",
-                alpha=0.4,
-                linewidth=1.5,
-                zorder=1,
-            )
-            ax_model.add_patch(area)
-        
-            ax_model.text(
-                x + 25,
-                75,
-                f"S{i + 1}\n7.500 m²",
-                ha="center",
-                va="center",
-                fontsize=10,
-                zorder=4,
-            )
-
-        
-        # links
-        links = model.links.geodataframe
-        if not links.empty:
-            links.plot(
-                ax=ax_model,
-                color="steelblue",
-                linewidth=2,
-                zorder=2,
-            )
-        
-        # nodes
-        nodes = model.nodes.geodataframe
-        if not nodes.empty:
-            nodes.plot(
-                ax=ax_model,
-                color="darkred",
-                markersize=35,
-                zorder=3,
-            )
-        
-            # names
-        for node_name, node in nodes.iterrows():
-            point = node.geometry
-            ax_model.annotate(
-                str(node_name),
-                (point.x, point.y),
-                xytext=(4, 7),
-                textcoords="offset points",
-                fontsize=9,
-            )
-        
-        ax_model.set_title("Idealized Hillslope SWMM model")
-        ax_model.set_xlabel("X coordinate (m)")
-        ax_model.set_ylabel("Y coordinate (m)")
-        ax_model.set_aspect("equal", adjustable="datalim")
-        ax_model.grid(True, alpha=0.3)
-        
-        
-        ax_model.set_xlim(-10, 270)
-        ax_model.set_ylim(-10, 165)
-        st.pyplot(fig_model)
-        plt.close(fig_model)
+        model_vis()
 
         # --------------------------------------------------
         # Download input file
