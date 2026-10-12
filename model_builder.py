@@ -52,7 +52,7 @@ def build_swmm_model(
         "[OPTIONS]",
         "FLOW_UNITS           CMS",
 #        "INFILTRATION         HORTON",
-        "INFILTRATION         CURVE_NUMBER"
+        "INFILTRATION         CURVE_NUMBER",
         "FLOW_ROUTING         DYNWAVE",
         "START_DATE           06/01/2025",
         "START_TIME           00:00:00",
