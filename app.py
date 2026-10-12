@@ -160,24 +160,28 @@ if st.button("Run SWMM simulation", type="primary"):
         
         model = swmmio.Model(str(inp_file))
         
-        image_file = workdir / "swmm_model.png"
+        fig_model, ax_model = plt.subplots(figsize=(11, 5))
         
-        swmmio.draw_model(
-            model,
-            title=None,
-            file_path=str(image_file),
-        )
+        # Plot conduits using the model's link geometries
+        links = model.links.geodataframe()
         
-        if image_file.exists():
-            st.image(
-                str(image_file),
-                caption="Idealized Hillslope SWMM model",
-                use_container_width=True,
-            )
-        else:
-            st.warning(
-                "swmmio did not create the model image."
-            )
+        if not links.empty:
+            links.plot(ax=ax_model, color="steelblue", linewidth=2)
+        
+        # Plot nodes using their coordinates
+        nodes = model.nodes.geodataframe()
+        
+        if not nodes.empty:
+            nodes.plot(ax=ax_model, color="darkred", markersize=25)
+        
+        ax_model.set_title("Idealized Hillslope SWMM model")
+        ax_model.set_aspect("equal", adjustable="datalim")
+        ax_model.set_xlabel("X coordinate (m)")
+        ax_model.set_ylabel("Y coordinate (m)")
+        ax_model.grid(True)
+        
+        st.pyplot(fig_model)
+        plt.close(fig_model)
 
         # --------------------------------------------------
         # Download input file
