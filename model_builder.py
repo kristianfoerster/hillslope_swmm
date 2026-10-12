@@ -34,17 +34,25 @@ def build_swmm_model(
     # Sechs Teilflächen mit jeweils 7.500 m²
     subcatchment_area_ha = 0.75
     
+    n = 6
+    
     # positions of junctions
-    node_x = {
-        "N1": 250,
-        "N2": 200,
-        "N3": 150,
-        "N4": 100,
-        "N5": 50,
-        "N6": 10,
-        "OUT1": 0,
-    }
-
+    #node_x = {
+    #    "N1": 250,
+    #    "N2": 200,
+    #    "N3": 150,
+    #    "N4": 100,
+    #    "N5": 50,
+    #    "N6": 10,
+    #    "OUT1": 0,
+    #}
+    node_x = dict()
+    for i in range(0,n):
+        i1 = i+1
+        x = n * 50 - i * 50
+        node_x[f"N{i1}"] = x
+    node_x["OUT1"]=0
+    
     lines = [
         "[TITLE]",
         "Idealized hillslope model - six serial subcatchments",
@@ -112,7 +120,7 @@ def build_swmm_model(
         "; Name RainGage Outlet Area(ha) %Imperv Width(m) Slope(%) CurbLen(m)",
     ]
 
-    for i in range(1, 7):
+    for i in range(1, n+1):
         outlet = f"N{i}"
         lines.append(
             f"S{i} RG1 {outlet} {subcatchment_area_ha:.3f} "
@@ -125,7 +133,7 @@ def build_swmm_model(
         "; Subcatchment N-Imperv N-Perv S-Imperv S-Perv PctZero RouteTo PctRouted",
     ]
 
-    for i in range(1, 7):
+    for i in range(1, n+1):
         lines.append(f"S{i} 0.01 0.15 1.5 5.0 25.0 OUTLET 100")
 
     lines += [
@@ -134,7 +142,7 @@ def build_swmm_model(
         "; Subcatchment MaxRate MinRate Decay DryTime MaxInfil",
     ]
 
-    for i in range(1, 7):
+    for i in range(1, n+1):
         # lines.append(f"S{i} {max_infiltration_rate:.2f} 4.0 3.0 7.0 0.0") # horton
         lines.append(f"S{i} {curve_number:.2f} 0.0 7")
 
@@ -144,8 +152,9 @@ def build_swmm_model(
         "; Name Elevation(m) MaxDepth(m) InitDepth(m) SurDepth(m) Aponded(m2)",
     ]
     
-    outlet_x = node_x["N6"]
-    for i in range(1, 7):
+    last_id = f"N{n}"
+    outlet_x = node_x[last_id]
+    for i in range(1, n+1):
         elevation = (node_x[f"N{i}"] - outlet_x) * slope_percent / 100.0
         lines.append(f"N{i} {elevation:.2f} 2.0 0.0 0.0 0.0")
 
@@ -159,15 +168,15 @@ def build_swmm_model(
         "; Name FromNode ToNode Length(m) Roughness InOffset OutOffset InitFlow MaxFlow",
     ]
 
-    for i in range(1, 6):
+    for i in range(1, n):
         length = abs(node_x[f"N{i}"] - node_x[f"N{i + 1}"])
         lines.append(
             f"C{i} N{i} N{i + 1} {length:.1f} 0.035 0.0 0.0 0.0 0.0"
         )
 
-    length = abs(node_x["N6"] - node_x["OUT1"])
+    length = abs(node_x[last_id] - node_x["OUT1"])
     lines.append(
-        f"C6 N6 OUT1 {length:.1f} 0.035 0.0 0.0 0.0 0.0"
+        f"C{n} N{n} OUT1 {length:.1f} 0.035 0.0 0.0 0.0 0.0"
     )
     
     lines += [
@@ -176,7 +185,7 @@ def build_swmm_model(
         "; Conduit Shape Geom1 Geom2 Geom3 Geom4 Barrels",
     ]
 
-    for i in range(1, 7):
+    for i in range(1, n+1):
         lines.append(f"C{i} CIRCULAR 0.30 0.0 0.0 0.0 1")
 
     lines += [
@@ -198,35 +207,41 @@ def build_swmm_model(
         "",
         "",
         "[POLYGONS]",
-        "S1 250 0",
-        "S1 300 0",
-        "S1 300 150",
-        "S1 250 150",
-        "S2 200 0",
-        "S2 250 0",
-        "S2 250 150",
-        "S2 200 150",
-        "S3 150 0",
-        "S3 200 0",
-        "S3 200 150",
-        "S3 150 150",
-        "S4 100 0",
-        "S4 150 0",
-        "S4 150 150",
-        "S4 100 150",
-        "S5 50 0",
-        "S5 100 0",
-        "S5 100 150",
-        "S5 50 150",
-        "S6 0 0",
-        "S6 50 0",
-        "S6 50 150",
-        "S6 0 150",
-        "",
-#        "[END]",
-        "",
+        #"S1 250 0",
+        #"S1 300 0",
+        #"S1 300 150",
+        #"S1 250 150",
+        #"S2 200 0",
+        #"S2 250 0",
+        #"S2 250 150",
+        #"S2 200 150",
+        #"S3 150 0",
+        #"S3 200 0",
+        #"S3 200 150",
+        #"S3 150 150",
+        #"S4 100 0",
+        #"S4 150 0",
+        #"S4 150 150",
+        #"S4 100 150",
+        #"S5 50 0",
+        #"S5 100 0",
+        #"S5 100 150",
+        #"S5 50 150",
+        #"S6 0 0",
+        #"S6 50 0",
+        #"S6 50 150",
+        #"S6 0 150",
+        #"",
     ]
-
+    
+    for i in range(0,n):
+        i1 = i+1
+        sid = f"N{i1}"
+        lines+=[f"S{i1} {node_x[sid]} 0",
+            f"S{i1} {node_x[sid]+50} 0",
+            f"S{i1} {node_x[sid]+50} 150",
+            f"S{i1} {node_x[sid]} 150"]    
+    
     output_file.write_text("\n".join(lines), encoding="utf-8")
 
     return output_file
