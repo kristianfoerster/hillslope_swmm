@@ -27,6 +27,9 @@ def build_model(inp_file):
         hourly_intensity=hourly_intensity,
         slope_percent=slope_percent,
         curve_number=curve_number,
+        dx = val_dx,
+        dy = val_dy,
+        n = val_n
     )
 
     #st.write("### Parameters:")
@@ -165,6 +168,30 @@ st.write(
 # --------------------------------------------------
 
 st.sidebar.header("Model parameters")
+
+val_dx = st.sidebar.slider(
+    "Length dx",
+    min_value=10.0,
+    max_value=100.0,
+    value=50.0,
+    step=10.0,
+)
+
+val_dy = st.sidebar.slider(
+    "Length dy",
+    min_value=50.0,
+    max_value=200.0,
+    value=150.0,
+    step=10.0,
+)
+
+val_n = st.sidebar.slider(
+    "# of hillslope elements",
+    min_value=1,
+    max_value=10,
+    value=6,
+    step=1,
+)
 
 curve_number = st.sidebar.slider(
     "Curve Number",

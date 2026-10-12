@@ -14,6 +14,9 @@ def build_swmm_model(
     hourly_intensity = 5.,
     slope_percent=5.0,
     curve_number=75.0,
+    dx = 50,
+    dy = 150,
+    n = 6
 ):
     """
     Erzeugt eine einfache SWMM-INP-Datei für ein idealisiertes Hangmodell.
@@ -32,9 +35,13 @@ def build_swmm_model(
     output_file = Path(output_file)
 
     # Sechs Teilflächen mit jeweils 7.500 m²
-    subcatchment_area_ha = 0.75
+    #subcatchment_area_ha = 0.75
     
-    n = 6
+    #n = 6
+    #dx = 50
+    #dy = 150
+    
+    subcatchment_area_ha = dx * dy * 1.-4
     
     # positions of junctions
     #node_x = {
@@ -49,7 +56,7 @@ def build_swmm_model(
     node_x = dict()
     for i in range(0,n):
         i1 = i+1
-        x = n * 50 - i * 50
+        x = n * dx - i * dx
         node_x[f"N{i1}"] = x
     node_x["OUT1"]=0
     
@@ -124,7 +131,7 @@ def build_swmm_model(
         outlet = f"N{i}"
         lines.append(
             f"S{i} RG1 {outlet} {subcatchment_area_ha:.3f} "
-            f"0.0 50.0 {slope_percent:.2f} 0.0"
+            f"0.0 {dy} {slope_percent:.2f} 0.0"
         )
 
     lines += [
@@ -238,8 +245,8 @@ def build_swmm_model(
         i1 = i+1
         sid = f"N{i1}"
         lines+=[f"S{i1} {node_x[sid]} 0",
-            f"S{i1} {node_x[sid]+50} 0",
-            f"S{i1} {node_x[sid]+50} 150",
+            f"S{i1} {node_x[sid]+dx} 0",
+            f"S{i1} {node_x[sid]+dx} 150",
             f"S{i1} {node_x[sid]} 150"]    
     
     output_file.write_text("\n".join(lines), encoding="utf-8")
