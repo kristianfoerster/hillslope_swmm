@@ -282,7 +282,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
                 
                 rainfall.append(rain_gage.rainfall)
                 evaporation.append(subcatchment.evaporation_loss)
-                s1_runoff.append(s1.runoff)
+                s1_runoff.append(subcatchment.runoff)
         
         hydrograph = pd.DataFrame(
             {
