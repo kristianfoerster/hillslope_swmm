@@ -96,7 +96,7 @@ def model_vis(inp_file):
         ax_model.text(
             x_center,
             y_center,
-            f"{name}\n7.500 m²",
+            f"{name}\n{val_dx*val_dy} m²",
             ha="center",
             va="center",
             fontsize=10,
