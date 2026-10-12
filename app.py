@@ -180,8 +180,8 @@ workdir.mkdir(exist_ok=True)
 filename = "hillslope_model.inp"
 inp_file = workdir / filename
 
-build_model(filename)
-model_vis(filename)
+build_model(inp_file)
+model_vis(inp_file)
 
 # --------------------------------------------------
 # Simulation
