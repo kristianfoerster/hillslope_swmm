@@ -160,25 +160,43 @@ if st.button("Run SWMM simulation", type="primary"):
         
         model = swmmio.Model(str(inp_file))
         
-        fig_model, ax_model = plt.subplots(figsize=(11, 5))
-        
-        # Plot conduits using the model's link geometries
+        fig_model, ax_model = plt.subplots(figsize=(12, 6))
+        linksAbflussverbindungen darstellen
         links = model.links.geodataframe
-        
         if not links.empty:
-            links.plot(ax=ax_model, color="steelblue", linewidth=2)
+            links.plot(
+                ax=ax_model,
+                color="steelblue",
+                linewidth=2,
+                zorder=2,
+            )
         
-        # Plot nodes using their coordinates
+        # nodes
         nodes = model.nodes.geodataframe
-        
         if not nodes.empty:
-            nodes.plot(ax=ax_model, color="darkred", markersize=25)
+            nodes.plot(
+                ax=ax_model,
+                color="darkred",
+                markersize=35,
+                zorder=3,
+            )
+        
+            # descriptions
+            for _, node in nodes.iterrows():
+                point = node.geometry
+                ax_model.annotate(
+                    node["Name"],
+                    (point.x, point.y),
+                    xytext=(4, 7),
+                    textcoords="offset points",
+                    fontsize=9,
+                )
         
         ax_model.set_title("Idealized Hillslope SWMM model")
-        ax_model.set_aspect("equal", adjustable="datalim")
         ax_model.set_xlabel("X coordinate (m)")
         ax_model.set_ylabel("Y coordinate (m)")
-        ax_model.grid(True)
+        ax_model.set_aspect("equal", adjustable="datalim")
+        ax_model.grid(True, alpha=0.3)
         
         st.pyplot(fig_model)
         plt.close(fig_model)
