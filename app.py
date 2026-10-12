@@ -17,6 +17,7 @@ import swmmio
 
 from model_builder import build_swmm_model
 
+from matplotlib.patches import Rectangle
 
 # --------------------------------------------------
 # Seitenaufbau
@@ -161,6 +162,34 @@ if st.button("Run SWMM simulation", type="primary"):
         model = swmmio.Model(str(inp_file))
         
         fig_model, ax_model = plt.subplots(figsize=(12, 6))
+
+        # areas
+        # Einzugsgebiete als idealisierte Rechtecke darstellen
+        for i in range(6):
+            x = i * 50
+        
+            area = Rectangle(
+                (x, 0),
+                50,
+                150,
+                facecolor="lightblue",
+                edgecolor="steelblue",
+                alpha=0.4,
+                linewidth=1.5,
+                zorder=1,
+            )
+            ax_model.add_patch(area)
+        
+            ax_model.text(
+                x + 25,
+                75,
+                f"S{i + 1}\n7.500 m²",
+                ha="center",
+                va="center",
+                fontsize=10,
+                zorder=4,
+            )
+
         
         # links
         links = model.links.geodataframe
@@ -199,6 +228,9 @@ if st.button("Run SWMM simulation", type="primary"):
         ax_model.set_aspect("equal", adjustable="datalim")
         ax_model.grid(True, alpha=0.3)
         
+        
+        ax_model.set_xlim(-10, 270)
+        ax_model.set_ylim(-10, 165)
         st.pyplot(fig_model)
         plt.close(fig_model)
 
