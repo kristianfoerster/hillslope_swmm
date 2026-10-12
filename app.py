@@ -29,10 +29,10 @@ def build_model(inp_file):
         curve_number=curve_number,
     )
 
-    st.write("### Parameters:")
-    st.write(f"Curve Number: {curve_number}")
-    st.write(f"Slope: {slope_percent:.1f} %")
-    st.write(f"Rainfall intensity: {hourly_intensity:.1f} mm/h")
+    #st.write("### Parameters:")
+    #st.write(f"Curve Number: {curve_number}")
+    #st.write(f"Slope: {slope_percent:.1f} %")
+    #st.write(f"Rainfall intensity: {hourly_intensity:.1f} mm/h")
 
 
 def model_vis(inp_file):
