@@ -246,8 +246,8 @@ def build_swmm_model(
         sid = f"N{i1}"
         lines+=[f"S{i1} {node_x[sid]} 0",
             f"S{i1} {node_x[sid]+dx} 0",
-            f"S{i1} {node_x[sid]+dx} 150",
-            f"S{i1} {node_x[sid]} 150"]    
+            f"S{i1} {node_x[sid]+dx} {dy}",
+            f"S{i1} {node_x[sid]} {dy}"]    
     
     output_file.write_text("\n".join(lines), encoding="utf-8")
 
