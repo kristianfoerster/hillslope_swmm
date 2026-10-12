@@ -112,17 +112,17 @@ if st.button("Run SWMM simulation", type="primary"):
                 "The simulation did not produce an SWMM output file."
             )
             st.stop()
-
+        
         times = []
         flows = []
-
+        
         with Simulation(str(inp_file)) as sim:
             outlet = Nodes(sim)["OUT1"]
-
-            for step in sim:
-                times.append(step)
+        
+            for _ in sim:
+                times.append(sim.current_time)
                 flows.append(outlet.total_inflow)
-
+        
         hydrograph = pd.DataFrame(
             {
                 "Time": pd.to_datetime(times),
