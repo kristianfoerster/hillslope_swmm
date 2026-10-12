@@ -161,7 +161,8 @@ if st.button("Run SWMM simulation", type="primary"):
         model = swmmio.Model(str(inp_file))
         
         fig_model, ax_model = plt.subplots(figsize=(12, 6))
-        linksAbflussverbindungen darstellen
+        
+        # links
         links = model.links.geodataframe
         if not links.empty:
             links.plot(
@@ -181,7 +182,7 @@ if st.button("Run SWMM simulation", type="primary"):
                 zorder=3,
             )
         
-            # descriptions
+            # names
             for _, node in nodes.iterrows():
                 point = node.geometry
                 ax_model.annotate(
