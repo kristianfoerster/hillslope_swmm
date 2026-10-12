@@ -139,8 +139,8 @@ def model_vis(inp_file):
     ax_model.grid(True, alpha=0.3)
     
     
-    ax_model.set_xlim(-10, 270)
-    ax_model.set_ylim(-10, 165)
+    #ax_model.set_xlim(-10, 270)
+    #ax_model.set_ylim(-10, 165)
     st.pyplot(fig_model)
     plt.close(fig_model)
 
