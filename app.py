@@ -189,7 +189,7 @@ model_vis(inp_file)
 
 if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
-    build_model()
+    #build_model(inp_file)
 
     try:
         # Run SWMM
