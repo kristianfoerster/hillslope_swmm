@@ -315,7 +315,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         axes[0].bar(
             df.index,
-            df["rainfall"],
+            df["rainfall"] * 24,
             width=1
         )
         axes[0].set_ylabel("P [mm/$\Delta t$]")
@@ -333,7 +333,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         axes[2].bar(
             df.index,
-            df["runoff"],
+            df["runoff"] * 86400 / subcatchment.area * 1000,
             width=1
         )
         axes[2].set_ylabel("R [mm/$\Delta t$]")
@@ -361,9 +361,15 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "by PySWMM for node OUT1."
         )
         
-        st.write("S1 runoff – erste Werte:", s1_runoff[:10])
-        st.write("S1 runoff – Maximum:", max(s1_runoff))
-        st.write("S1 runoff – Summe:", sum(s1_runoff))
+        Sum_P = sum(df["rainfall"] * 24)
+        Sum_E = sum(df["evaporation"])
+        Sum_R = sum(df["runoff"] * 86400 / subcatchment.area * 1000)
+        dS    = Sum_P - Sum_R - Sum_E
+        
+        st.write("S1 Precipitation:", Sum_P)
+        st.write("S1 Evapotranspiration:", Sum_E)
+        st.write("S1 Eunoff:", Sum_R)
+        st.write("S1 delta S:", dS)
 
 
         # --------------------------------------------------
