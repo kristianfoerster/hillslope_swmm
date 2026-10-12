@@ -12,7 +12,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from pyswmm import Simulation, Nodes
+from pyswmm import Simulation, Nodes, RainGages, Subcatchments
 import swmmio
 
 from model_builder import build_swmm_model
@@ -270,11 +270,11 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         rainfall = []
         evaporation = []
         s1_runoff = []
-        rain_gage = RainGages(sim)["RG1"]
-        subcatchment = Subcatchments(sim)["S1"]
         
         with Simulation(str(inp_file)) as sim:
             outlet = Nodes(sim)["OUT1"]
+            rain_gage = RainGages(sim)["RG1"]
+            subcatchment = Subcatchments(sim)["S1"]
         
             for _ in sim:
                 times.append(sim.current_time)
