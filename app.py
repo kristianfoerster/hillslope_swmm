@@ -304,52 +304,52 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         fig, axes = plt.subplots(4,1,figsize=(11, 4), sharex=True)
 
-        #ax.plot(
-        #    hydrograph["Time"],
-        #    hydrograph["Discharge (m³/s)"],
-        #)
-
-        #ax.set_xlabel("Time")
-        #ax.set_ylabel("Discharge (m³/s)")
-        #ax.grid(True)
-
-
-        axes[0].bar(
-            df["time"],
-            df["rainfall"],
-            width=0.03
+        ax.plot(
+            hydrograph["Time"],
+            hydrograph["Discharge (m³/s)"],
         )
-        axes[0].set_ylabel("P [mm/$\Delta t$]")
-        axes[1].set_title("S1 Precipitation P")
-        axes[0].grid(axis="y", alpha=0.3)
 
-        axes[1].bar(
-            df["time"],
-            df["evaporation"],
-            width=0.03
-        )
-        axes[1].set_ylabel("Evapotranspiration [mm/$\Delta t$]")
-        axes[1].set_title("S1 Evapotranspiration ET")
-        axes[1].grid(axis="y", alpha=0.3)
-
-        axes[2].bar(
-            df["time"],
-            df["evaporation"],
-            width=0.03
-        )
-        axes[2].set_ylabel("Runoff [mm/$\Delta t$]")
-        axes[2].set_title("S1 Runoff R")
-        axes[2].grid(axis="y", alpha=0.3)
+        ax.set_xlabel("Time")
+        ax.set_ylabel("Discharge (m³/s)")
+        ax.grid(True)
 
 
-        axes[3].plot(
-            times,
-            flows
-        )
-        axes[3].set_ylabel("Discharge [m³/s]")
-        axes[3].set_xlabel("Time")
-        axes[3].set_title("Total hillslope discharge")
-        axes[3].grid(alpha=0.3)
+        # axes[0].bar(
+        #     df["time"],
+        #     df["rainfall"],
+        #     width=0.03
+        # )
+        # axes[0].set_ylabel("P [mm/$\Delta t$]")
+        # axes[1].set_title("S1 Precipitation P")
+        # axes[0].grid(axis="y", alpha=0.3)
+
+        # axes[1].bar(
+        #     df["time"],
+        #     df["evaporation"],
+        #     width=0.03
+        # )
+        # axes[1].set_ylabel("Evapotranspiration [mm/$\Delta t$]")
+        # axes[1].set_title("S1 Evapotranspiration ET")
+        # axes[1].grid(axis="y", alpha=0.3)
+
+        # axes[2].bar(
+        #     df["time"],
+        #     df["evaporation"],
+        #     width=0.03
+        # )
+        # axes[2].set_ylabel("Runoff [mm/$\Delta t$]")
+        # axes[2].set_title("S1 Runoff R")
+        # axes[2].grid(axis="y", alpha=0.3)
+
+
+        # axes[3].plot(
+        #     times,
+        #     flows
+        # )
+        # axes[3].set_ylabel("Discharge [m³/s]")
+        # axes[3].set_xlabel("Time")
+        # axes[3].set_title("Total hillslope discharge")
+        # axes[3].grid(alpha=0.3)
 
 
         fig.autofmt_xdate()
