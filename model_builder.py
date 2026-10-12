@@ -41,7 +41,7 @@ def build_swmm_model(
     #dx = 50
     #dy = 150
     
-    subcatchment_area_ha = dx * dy * 1.-4
+    subcatchment_area_ha = dx * dy * 1.E-4
     
     # positions of junctions
     #node_x = {
