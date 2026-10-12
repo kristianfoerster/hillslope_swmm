@@ -1,6 +1,7 @@
 streamlit
 pyswmm==1.5.1
 swmmio==0.8.6
+geopandas
 numpy
 pandas
 matplotlib
