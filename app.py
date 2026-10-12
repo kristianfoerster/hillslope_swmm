@@ -162,9 +162,9 @@ if st.button("Run SWMM simulation", type="primary"):
 
         fig_model, ax_model = plt.subplots(figsize=(11, 5))
 
-        swmmio.utils.plotting.draw_model(
+        swmmio.draw_model(
             model,
-            ax=ax_model,
+            title="Idealized Hillslope Model",
         )
 
         st.pyplot(fig_model)
