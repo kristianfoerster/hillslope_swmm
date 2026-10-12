@@ -20,8 +20,6 @@ from model_builder import build_swmm_model
 from matplotlib.patches import Rectangle
 
 def build_model(inp_file):
-    workdir = Path("swmm_run")
-    workdir.mkdir(exist_ok=True)
 
     # Build model
     build_swmm_model(
@@ -175,6 +173,9 @@ run_simulation = st.sidebar.button(
     type="primary",
     use_container_width=True,
 )
+
+workdir = Path("swmm_run")
+workdir.mkdir(exist_ok=True)
 
 filename = "hillslope_model.inp"
 inp_file = workdir / filename
