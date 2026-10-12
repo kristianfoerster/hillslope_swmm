@@ -193,7 +193,7 @@ def build_swmm_model(
     ]
 
     for i in range(1, n+1):
-        lines.append(f"C{i} CIRCULAR 0.30 0.0 0.0 0.0 1")
+        lines.append(f"C{i} TRAPEZOIDAL 0.50 1.5 1.5 0.0 1")
 
     lines += [
         "",

@@ -43,7 +43,7 @@ def model_vis(inp_file):
     # Model visualization
     # --------------------------------------------------
     
-    st.subheader("SWMM model")
+    #st.subheader("SWMM model")
     
     model = swmmio.Model(str(inp_file))
     
@@ -167,7 +167,7 @@ st.write(
 # Modellparameter
 # --------------------------------------------------
 
-st.sidebar.header("Model parameters")
+st.sidebar.header("Model dimension & parameters")
 
 val_dx = st.sidebar.slider(
     "Length dx",
@@ -282,7 +282,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             }
         )
 
-        st.subheader("Outlet hydrograph")
+        #st.subheader("Outlet hydrograph")
 
         fig, ax = plt.subplots(figsize=(11, 4))
 
