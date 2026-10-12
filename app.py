@@ -361,7 +361,9 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "by PySWMM for node OUT1."
         )
         
-        
+        st.write("S1 runoff – erste Werte:", s1_runoff[:10])
+        st.write("S1 runoff – Maximum:", max(s1_runoff))
+        st.write("S1 runoff – Summe:", sum(s1_runoff))
 
 
         # --------------------------------------------------
