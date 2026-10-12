@@ -250,7 +250,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "by PySWMM for node OUT1."
         )
 
-        model_vis()
+        model_vis(inp_file)
 
         # --------------------------------------------------
         # Download input file
