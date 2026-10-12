@@ -301,7 +301,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         }).resample('D').sum()
 
 
-        fig, ax = plt.subplots(4,1,figsize=(11, 4), sharex=True)
+        fig, axes = plt.subplots(4,1,figsize=(11, 4), sharex=True)
 
         #ax.plot(
         #    hydrograph["Time"],
