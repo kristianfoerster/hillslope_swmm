@@ -293,7 +293,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         #st.subheader("Outlet hydrograph")
 
-        df = pd.DataFrame(index=pd.to_datetime("times"), data={
+        df = pd.DataFrame(index=pd.to_datetime(times), data={
             #"flow": flows,
             "rainfall": rainfall,
             "evaporation": evaporation,
