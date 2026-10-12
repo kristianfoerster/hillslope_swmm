@@ -331,9 +331,9 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[1].set_title("S1 Evapotranspiration ET")
         axes[1].grid(axis="y", alpha=0.3)
 
-        axes[2].plot(
+        axes[2].bar(
             df.index,
-            df["evaporation"],
+            df["runoff"],
             width=0.03
         )
         axes[2].set_ylabel("Runoff [mm/$\Delta t$]")
