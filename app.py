@@ -293,13 +293,12 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         #st.subheader("Outlet hydrograph")
 
-        df = pd.DataFrame({
-            "time": times,
-            #"flow": flows,
-            "rainfall": rainfall,
-            "evaporation": evaporation,
-            "runoff": s1_runoff
-        }).resample('D').sum()
+        #df = pd.DataFrame(index="times", data={
+        #    #"flow": flows,
+        #    "rainfall": rainfall,
+        #    "evaporation": evaporation,
+        #    "runoff": s1_runoff
+        #}).resample('D').sum()
 
 
         fig, axes = plt.subplots(4,1,figsize=(11, 4), sharex=True)
