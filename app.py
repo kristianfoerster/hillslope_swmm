@@ -17,7 +17,7 @@ import swmmio
 
 from model_builder import build_swmm_model
 
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Polygon
 
 def build_model(inp_file):
 
