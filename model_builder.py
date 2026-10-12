@@ -11,8 +11,9 @@ from pathlib import Path
 
 def build_swmm_model(
     output_file="hillslope_model.inp",
-#    rainfall_mm_per_hour=10.0,
-#    simulation_hours=6,
+    hourly_intensity = 5.,
+    slope_percent=5.0,
+    curve_number=75.0,
 ):
     """
     Erzeugt eine einfache SWMM-INP-Datei für ein idealisiertes Hangmodell.
@@ -32,6 +33,17 @@ def build_swmm_model(
 
     # Sechs Teilflächen mit jeweils 7.500 m²
     subcatchment_area_ha = 0.75
+    
+    # positions of junctions
+    node_x = {
+        "N1": 250,
+        "N2": 200,
+        "N3": 150,
+        "N4": 100,
+        "N5": 50,
+        "N6": 10,
+        "OUT1": 0,
+    }
 
     lines = [
         "[TITLE]",
@@ -39,7 +51,8 @@ def build_swmm_model(
         "",
         "[OPTIONS]",
         "FLOW_UNITS           CMS",
-        "INFILTRATION         HORTON",
+#        "INFILTRATION         HORTON",
+        "INFILTRATION         CURVE_NUMBER"
         "FLOW_ROUTING         DYNWAVE",
         "START_DATE           06/01/2025",
         "START_TIME           00:00:00",
@@ -103,7 +116,7 @@ def build_swmm_model(
         outlet = f"N{i}"
         lines.append(
             f"S{i} RG1 {outlet} {subcatchment_area_ha:.3f} "
-            "0.0 50.0 5.0 0.0"
+            f"0.0 50.0 {slope_percent:.2f} 0.0"
         )
 
     lines += [
@@ -122,35 +135,41 @@ def build_swmm_model(
     ]
 
     for i in range(1, 7):
-        lines.append(f"S{i} 75.0 4.0 3.0 7.0 0.0")
+        # lines.append(f"S{i} {max_infiltration_rate:.2f} 4.0 3.0 7.0 0.0") # horton
+        lines.append(f"S{i} {curve_number:.2f} 0.0 7")
 
     lines += [
         "",
         "[JUNCTIONS]",
         "; Name Elevation(m) MaxDepth(m) InitDepth(m) SurDepth(m) Aponded(m2)",
     ]
-
+    
+    outlet_x = node_x["N6"]
     for i in range(1, 7):
-        elevation = (6 - i) * 0.5
+        elevation = (node_x[f"N{i}"] - outlet_x) * slope_percent / 100.0
         lines.append(f"N{i} {elevation:.2f} 2.0 0.0 0.0 0.0")
 
     lines += [
         "",
         "[OUTFALLS]",
         "; Name Elevation(m) Type StageData Gated RouteTo",
-        "OUT1 0.0 FREE NO",
+        f"OUT1 {-slope_percent / 100.0 * (node_x['N6'] - node_x['OUT1']):.2f} FREE NO",
         "",
         "[CONDUITS]",
         "; Name FromNode ToNode Length(m) Roughness InOffset OutOffset InitFlow MaxFlow",
     ]
 
     for i in range(1, 6):
+        length = abs(node_x[f"N{i}"] - node_x[f"N{i + 1}"])
         lines.append(
-            f"C{i} N{i} N{i + 1} 50.0 0.035 0.0 0.0 0.0 0.0"
+            f"C{i} N{i} N{i + 1} {length:.1f} 0.035 0.0 0.0 0.0 0.0"
         )
 
-    lines.append("C6 N6 OUT1 50.0 0.035 0.0 0.0 0.0 0.0")
-
+    length = abs(node_x["N6"] - node_x["OUT1"])
+    lines.append(
+        f"C6 N6 OUT1 {length:.1f} 0.035 0.0 0.0 0.0 0.0"
+    )
+    
     lines += [
         "",
         "[XSECTIONS]",
@@ -174,13 +193,9 @@ def build_swmm_model(
         "Units METERS",
         "",
         "[COORDINATES]",
-        "N1 250 25",
-        "N2 200 25",
-        "N3 150 25",
-        "N4 100 25",
-        "N5 50 25",
-        "N6 10 25",
-        "OUT1 0 25",
+        *[f"N{i} {node_x[f'N{i}']} 25" for i in range(1, 7)],
+        f"OUT1 {node_x['OUT1']} 25",
+        "",
         "",
         "[POLYGONS]",
         "S1 250 0",
