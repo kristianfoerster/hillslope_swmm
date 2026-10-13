@@ -390,7 +390,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
                 f"S1 Evapotranspiration: {Sum_E:>8.1f}\n"
                 f"S1 Infiltration:       {Sum_I:>8.1f}\n"
                 f"S1 Runoff:             {Sum_R:>8.1f}\n"
-                f"S1 Delta S:            {dS:.1f}"
+                f"S1 Delta S:            {dS:>8.1f}"
                  )
 
         # --------------------------------------------------
