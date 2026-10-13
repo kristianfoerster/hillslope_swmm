@@ -303,6 +303,8 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             "runoff": s1_runoff
         }).resample('D').mean()
 
+        # for display reasons:
+        df.index = df.index + pd.Timedelta(hours=12)
 
         fig, axes = plt.subplots(5,1,figsize=(11, 8), sharex=True)
 
