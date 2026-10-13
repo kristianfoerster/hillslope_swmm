@@ -380,14 +380,16 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         
         Sum_P = sum(df["rainfall"] * 24)
         Sum_E = sum(df["evaporation"])
+        Sum_I = sum(df["infiltration"] * 24)
         Sum_R = sum(df["runoff"] * 86400 / (val_dx * val_dy) * 1000)
-        dS    = Sum_P - Sum_R - Sum_E
+        dS    = Sum_P - Sum_R - Sum_E - Sum_I
         
-        st.write("S1 Precipitation:", Sum_P)
-        st.write("S1 Evapotranspiration:", Sum_E)
-        st.write("S1 Eunoff:", Sum_R)
-        st.write("S1 delta S:", dS)
-
+        st.code(f"S1 Precipitation:      {Sum_P:>8.1f}\n"
+                f"S1 Evapotranspiration: {Sum_E:>8.1f}\n"
+                f"S1 Infiltration:       {Sum_I:>8.1f}\n"
+                f"S1 Runoff:             {Sum_R:>8.1f}\n"
+                f"S1 Delta S:            {dS:.1f}"
+                 )
 
         # --------------------------------------------------
         # Download input file
