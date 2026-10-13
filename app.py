@@ -270,6 +270,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         rainfall = []
         evaporation = []
         s1_runoff = []
+        infiltration = []
         
         with Simulation(str(inp_file)) as sim:
             outlet = Nodes(sim)["OUT1"]
@@ -283,6 +284,7 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
                 rainfall.append(rain_gage.rainfall)
                 evaporation.append(subcatchment.evaporation_loss)
                 s1_runoff.append(subcatchment.runoff)
+                infiltration.append(subcatchment.infiltration_loss)
         
         hydrograph = pd.DataFrame(
             {
@@ -297,11 +299,12 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
             #"flow": flows,
             "rainfall": rainfall,
             "evaporation": evaporation,
+            "infiltration": infiltration,
             "runoff": s1_runoff
         }).resample('D').mean()
 
 
-        fig, axes = plt.subplots(4,1,figsize=(11, 8), sharex=True)
+        fig, axes = plt.subplots(5,1,figsize=(11, 8), sharex=True)
 
         #ax.plot(
         #    hydrograph["Time"],
@@ -316,7 +319,8 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[0].bar(
             df.index,
             df["rainfall"] * 24,
-            width=1
+            width=1,
+            color="#a6cee3"
         )
         axes[0].set_ylabel("P [mm/$\Delta t$]")
         axes[0].set_title("S1 Precipitation P")
@@ -325,7 +329,8 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
         axes[1].bar(
             df.index,
             df["evaporation"],
-            width=1
+            width=1,
+            color="#b2df8a"
         )
         axes[1].set_ylabel("ET [mm/$\Delta t$]")
         axes[1].set_title("S1 Evapotranspiration ET")
@@ -333,22 +338,34 @@ if run_simulation: # st.button("Run SWMM simulation", type="primary"):
 
         axes[2].bar(
             df.index,
+            df["infiltration"] * 24,
+            width=1,
+            color="#fdbf6f"
+        )
+        axes[2].set_ylabel("Inf [mm/$\Delta t$]")
+        axes[2].set_title("S1 Infiltration Inf")
+        axes[2].grid(alpha=0.3)
+
+        axes[3].bar(
+            df.index,
             df["runoff"] * 86400 / (val_dx * val_dy) * 1000,
-            width=1
+            width=1,
+            color="#1f78b4"
         )
-        axes[2].set_ylabel("R [mm/$\Delta t$]")
-        axes[2].set_title("S1 Runoff R")
-        axes[2].grid(axis="y", alpha=0.3)
+        axes[3].set_ylabel("R [mm/$\Delta t$]")
+        axes[3].set_title("S1 Runoff R")
+        axes[3].grid(axis="y", alpha=0.3)
 
 
-        axes[3].plot(
+        axes[4].plot(
             times,
-            flows
+            flows,
+            color="#1f78b4"
         )
-        axes[3].set_ylabel("Discharge [m³/s]")
-        axes[3].set_xlabel("Time")
-        axes[3].set_title("Total hillslope discharge")
-        axes[3].grid(alpha=0.3)
+        axes[4].set_ylabel("Discharge [m³/s]")
+        axes[4].set_xlabel("Time")
+        axes[4].set_title("Total hillslope discharge")
+        axes[4].grid(alpha=0.3)
 
         fig.tight_layout()
 
